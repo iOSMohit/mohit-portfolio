@@ -342,7 +342,15 @@
   .reviews-banner-text{ font-size:14px; }
   .reviews-banner-text strong{ display:block; font-family:var(--font-display); font-size:15px; margin-bottom:2px; }
   .reviews-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  .review-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; }
+  .review-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px;
+    transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .review-card:hover{
+    transform:translateY(-4px) scale(1.02);
+    border-color:var(--accent);
+    box-shadow:0 14px 28px -16px rgba(0,0,0,.18);
+  }
   .review-stars{ display:flex; gap:2px; margin-bottom:8px; }
   .review-stars .icon{ width:13px; height:13px; color:var(--star); fill:var(--star); }
   @keyframes starPop{
