@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#f5f5f7" />
+<title>Mohit Kumar — Senior iOS Engineer</title>
+<meta name="description" content="Mohit Kumar — Senior iOS Engineer with 8+ years building Swift &amp; SwiftUI apps." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f5f5f7;
+    --surface:#ffffff;
+    --surface-alt:#fbfbfd;
+    --border:#e4e4e9;
+    --text:#1d1d1f;
+    --text-secondary:#6e6e73;
+    --text-tertiary:#a1a1a6;
+    --accent:#0a84ff;
+    --accent-deep:#0066cc;
+    --star:#ff9f0a;
+    --success:#34c759;
+    --font-display:'Manrope', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+    --topbar-h:54px;
+    --pillbar-h:46px;
+    --gutter:20px;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:var(--font-body);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding-left:env(safe-area-inset-left, 0px);
+    padding-right:env(safe-area-inset-right, 0px);
+  }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; }
+  button{ font-family:inherit; cursor:pointer; }
+  .icon{ width:18px; height:18px; stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px; }
+
+  .container{ max-width:760px; margin:0 auto; padding:0 var(--gutter); }
+
+  /* ============ TOP BAR ============ */
+  .topbar{
+    position:sticky; top:0; z-index:60;
+    height:calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
+    padding-top:env(safe-area-inset-top, 0px);
+    background:rgba(255,255,255,.86); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center;
+  }
+  .topbar-inner{
+    position:relative; width:100%; max-width:760px; margin:0 auto; padding:0 var(--gutter);
+    height:100%; display:flex; align-items:center; justify-content:space-between;
+  }
+  .topbar-default, .topbar-collapsed{
+    position:absolute; left:var(--gutter); right:var(--gutter); top:0; height:100%;
+    display:flex; align-items:center; justify-content:space-between;
+    transition:opacity .25s ease; 
+  }
+  .topbar-default{ opacity:1; }
+  .topbar-collapsed{ opacity:0; pointer-events:none; }
+  .topbar.scrolled .topbar-default{ opacity:0; pointer-events:none; }
+  .topbar.scrolled .topbar-collapsed{ opacity:1; pointer-events:auto; }
+  .topbar-leftgroup{ display:flex; align-items:center; gap:8px; color:var(--text-secondary); font-weight:600; font-size:15px; }
+  .topbar-leftgroup .icon{ color:var(--accent); }
+  .topbar-search{
+    width:34px; height:34px; border-radius:50%; background:var(--surface-alt);
+    display:flex; align-items:center; justify-content:center; color:var(--text-secondary);
+    border:1px solid var(--border);
+  }
+  .topbar-collapsed{ gap:10px; }
+  .mini-icon{
+    width:30px; height:30px; border-radius:8px; flex-shrink:0;
+    background:linear-gradient(135deg,#5e5ce6,#0a84ff);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:800; font-size:11px; color:#fff;
+  }
+  .mini-name{ font-weight:700; font-size:14px; flex:1; margin-left:10px; }
+
+  /* ============ PILL NAV ============ */
+  .pillbar{
+    position:sticky; top:calc(var(--topbar-h) + env(safe-area-inset-top, 0px)); z-index:55;
+    height:var(--pillbar-h);
+    background:rgba(245,245,247,.9); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; overflow-x:auto; gap:8px;
+    justify-content:center; justify-content:safe center;
+    padding:0 var(--gutter); scrollbar-width:none;
+  }
+  .pillbar::-webkit-scrollbar{ display:none; }
+  .pill{
+    position:relative; z-index:1;
+    font-family:var(--font-body); font-size:13px; font-weight:600;
+    color:var(--text-secondary); background:transparent; border:1px solid var(--border);
+    padding:7px 14px; border-radius:999px; white-space:nowrap;
+    transition:color .2s ease, border-color .2s ease, transform .12s ease;
+  }
+  .pill:hover{ border-color:var(--accent); color:var(--text); }
+  .pill.active{ color:#fff; border-color:transparent; }
+  .pill-indicator{
+    position:absolute; top:50%; height:32px; transform:translateY(-50%);
+    background:var(--text); border-radius:999px; z-index:0; opacity:0;
+    transition:left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1), opacity .2s ease;
+  }
+  .pill-indicator.ready{ opacity:1; }
+
+  /* ============ REVEAL ============ */
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease; }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+
+  /* ============ HERO ============ */
+  .hero{ padding:36px 0 28px; }
+  .hero-top{ display:flex; gap:18px; align-items:flex-start; }
+  .app-icon{
+    width:clamp(72px, 22vw, 104px); height:clamp(72px, 22vw, 104px);
+    border-radius:clamp(18px, 5.5vw, 24px); flex-shrink:0;
+    background:linear-gradient(135deg,#5e5ce6,#0a84ff);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:800; font-size:clamp(26px, 8vw, 36px); color:#fff;
+    box-shadow:0 10px 30px -10px rgba(10,132,255,.5);
+    position:relative; overflow:hidden;
+    animation:iconPop .6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .app-icon::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.35) 50%, transparent 65%);
+    transform:translateX(-120%); transition:transform .8s ease;
+  }
+  .app-icon:hover::after{ transform:translateX(120%); }
+
+  @keyframes iconPop{
+    0%{ transform:scale(.4) rotate(-8deg); opacity:0; }
+    60%{ transform:scale(1.08) rotate(2deg); opacity:1; }
+    100%{ transform:scale(1) rotate(0); }
+  }
+  @keyframes badgePop{
+    from{ transform:scale(.6); opacity:0; }
+    to{ transform:scale(1); opacity:1; }
+  }
+  .hero-info{ flex:1; min-width:0; padding-top:4px; }
+  .app-name{ font-family:var(--font-display); font-weight:800; font-size:clamp(21px, 6.5vw, 28px); letter-spacing:-.01em; }
+  .app-subtitle{ color:var(--text-secondary); font-size:clamp(13px, 3.6vw, 15px); margin-top:2px; }
+  .badge-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .badge{
+    display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:600;
+    padding:5px 11px; border-radius:999px; background:var(--surface-alt); border:1px solid var(--border); color:var(--text-secondary);
+  }
+  .badge .icon{ width:13px; height:13px; }
+  .badge.star .icon{ color:var(--star); fill:var(--star); }
+  .badge.cat{ color:var(--accent); border-color:transparent; background:rgba(10,132,255,.08); }
+
+  .trait-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .trait-chip{
+    font-size:12px; font-weight:600; color:var(--text-secondary);
+    background:var(--surface); border:1px solid var(--border); padding:5px 12px; border-radius:999px;
+  }
+
+  .badge-row .badge, .trait-row .trait-chip{
+    animation:badgePop .45s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .badge-row .badge:nth-child(1){ animation-delay:.15s; }
+  .badge-row .badge:nth-child(2){ animation-delay:.25s; }
+  .badge-row .badge:nth-child(3){ animation-delay:.35s; }
+  .trait-row .trait-chip:nth-child(1){ animation-delay:.45s; }
+  .trait-row .trait-chip:nth-child(2){ animation-delay:.5s; }
+  .trait-row .trait-chip:nth-child(3){ animation-delay:.55s; }
+
+  .action-row{ display:flex; align-items:center; gap:10px; margin-top:18px; }
+  .get-btn{
+    position:relative; isolation:isolate; overflow:hidden; display:inline-flex;
+    align-items:center; justify-content:center;
+    width:96px; min-width:96px; height:36px; border-radius:18px; border:1.5px solid transparent;
+    background:var(--accent); color:#fff; font-family:var(--font-display);
+    font-weight:800; font-size:14px; letter-spacing:.02em; padding:0 22px;
+    transition:width .35s cubic-bezier(.4,0,.2,1), min-width .35s cubic-bezier(.4,0,.2,1),
+      border-radius .35s ease, background .25s ease, color .2s ease, border-color .25s ease,
+      padding .35s ease, transform .12s ease;
+  }
+  .get-btn .get-label{ position:relative; z-index:1; white-space:nowrap; transition:opacity .15s ease; }
+  .get-btn.installing{
+    width:36px; min-width:36px; padding:0; background:var(--surface-alt); border-color:var(--border);
+  }
+  .get-btn.installing .get-label{ opacity:0; }
+  .get-btn.installed{
+    background:transparent; border-color:var(--success); color:var(--success);
+    animation:pulseGlow 2s ease-out infinite;
+  }
+  .get-ring{
+    position:absolute; inset:0; width:36px; height:36px; margin:auto;
+    transform:rotate(-90deg); opacity:0; transition:opacity .2s ease;
+  }
+  .get-btn.installing .get-ring{ opacity:1; }
+  .ring-track{ fill:none; stroke:var(--border); stroke-width:2.5; }
+  .ring-fill{
+    fill:none; stroke:var(--accent); stroke-width:2.5;
+    stroke-dasharray:97.4; stroke-dashoffset:97.4;
+    transition:stroke-dashoffset 1s linear;
+  }
+  .get-btn.installing .ring-fill{ stroke-dashoffset:0; }
+  @keyframes pulseGlow{
+    0%, 100%{ box-shadow:0 0 0 0 rgba(52,199,89,.35); }
+    50%{ box-shadow:0 0 0 6px rgba(52,199,89,0); }
+  }
+  .icon-btn{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--border);
+    background:var(--surface); display:flex; align-items:center; justify-content:center;
+    color:var(--text-secondary); transition:.15s;
+  }
+  .icon-btn:hover{ color:var(--accent); border-color:var(--accent); }
+  .get-btn:active, .icon-btn:active, .app-row-get:active, .pill:active, .contact-link:active{
+    transform:scale(.96);
+  }
+
+  /* ============ PANELS ============ */
+  .panel{ padding:32px 0; border-top:1px solid var(--border); }
+  .panel-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:18px; gap:12px; }
+  .panel-title{ font-family:var(--font-display); font-weight:800; font-size:clamp(18px, 5vw, 21px); }
+  .panel-sub{ font-size:12.5px; color:var(--text-tertiary); }
+  .version-badge{
+    font-family:var(--font-mono); font-size:11.5px; font-weight:600;
+    background:var(--surface-alt); border:1px solid var(--border);
+    color:var(--text-secondary); padding:3px 9px; border-radius:6px;
+  }
+
+  /* ---- Highlights carousel ---- */
+  .highlights-row{
+    display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory;
+    padding-bottom:6px; scrollbar-width:none; margin:0 calc(-1 * var(--gutter));
+    padding-left:var(--gutter); padding-right:var(--gutter);
+  }
+  .highlights-row::-webkit-scrollbar{ display:none; }
+  .highlight-card{
+    scroll-snap-align:start; flex-shrink:0; width:148px;
+    border-radius:18px; overflow:hidden; background:var(--surface);
+    border:1px solid var(--border); display:flex; flex-direction:column;
+  }
+  .highlight-top{
+    height:120px; display:flex; align-items:center; justify-content:center;
+  }
+  .highlight-top .icon{ width:34px; height:34px; color:#fff; stroke-width:2.2; }
+  .highlight-body{ padding:12px; }
+  .highlight-title{ font-family:var(--font-display); font-weight:700; font-size:13px; margin-bottom:4px; }
+  .highlight-desc{ font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .g1{ background:linear-gradient(135deg,#0a84ff,#5e5ce6); }
+  .g2{ background:linear-gradient(135deg,#ff9f0a,#ff375f); }
+  .g3{ background:linear-gradient(135deg,#34c759,#0a84ff); }
+  .g4{ background:linear-gradient(135deg,#bf5af2,#ff375f); }
+  .g5{ background:linear-gradient(135deg,#ff9f0a,#ffd60a); }
+  .g6{ background:linear-gradient(135deg,#5e5ce6,#34c759); }
+
+  .carousel-dots{ display:flex; justify-content:center; gap:6px; margin-top:14px; }
+  .carousel-dots .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--border); border:none;
+    padding:0; transition:transform .25s ease, background .25s ease;
+  }
+  .carousel-dots .dot.active{ background:var(--text); transform:scale(1.4); }
+
+  @keyframes cardPop{
+    from{ transform:scale(.85) translateY(10px); opacity:0; }
+    to{ transform:scale(1) translateY(0); opacity:1; }
+  }
+  .reveal:not(.visible) .highlight-card{ opacity:0; }
+  .reveal.visible .highlight-card{ animation:cardPop .45s cubic-bezier(.34,1.56,.64,1) both; }
+  .highlight-card:nth-child(1){ animation-delay:.05s; }
+  .highlight-card:nth-child(2){ animation-delay:.1s; }
+  .highlight-card:nth-child(3){ animation-delay:.15s; }
+  .highlight-card:nth-child(4){ animation-delay:.2s; }
+  .highlight-card:nth-child(5){ animation-delay:.25s; }
+  .highlight-card:nth-child(6){ animation-delay:.3s; }
+
+  /* ---- What's new ---- */
+  .whats-new-date{ font-size:12.5px; color:var(--text-tertiary); margin-bottom:10px; margin-top:-10px; }
+  .bullet-list li{
+    position:relative; padding-left:18px; font-size:14.5px; color:var(--text);
+    margin-bottom:9px;
+  }
+  .bullet-list li::before{
+    content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent);
+  }
+
+  /* ---- Description ---- */
+  .desc-text{ font-size:14.5px; color:var(--text); }
+  .desc-text p{ margin-bottom:10px; }
+  .desc-extra{ max-height:0; overflow:hidden; transition:max-height .35s ease; }
+  .desc-extra.open{ max-height:240px; }
+  .more-toggle{
+    display:inline-flex; align-items:center; gap:4px; margin-top:6px;
+    background:none; border:none; color:var(--accent); font-weight:600; font-size:14px; padding:0;
+  }
+  .more-toggle .icon{ width:14px; height:14px; transition:transform .25s ease; }
+  .more-toggle.open .icon{ transform:rotate(180deg); }
+
+  /* ---- Info table ---- */
+  .info-table{ margin-top:24px; }
+  .info-row{
+    display:flex; justify-content:space-between; gap:16px; padding:12px 0;
+    border-bottom:1px solid var(--border); font-size:14px;
+  }
+  .info-row:last-child{ border-bottom:none; }
+  .info-key{ color:var(--text-secondary); }
+  .info-val{ font-weight:600; text-align:right; }
+
+  .chip-section{ margin-top:24px; }
+  .chip-section-title{ font-size:12.5px; font-weight:700; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+  .chip{
+    font-size:13px; font-weight:500; color:var(--text);
+    background:var(--surface-alt); border:1px solid var(--border);
+    padding:6px 12px; border-radius:999px;
+  }
+
+  /* ---- Version history ---- */
+  .version-item{ padding:18px 0; border-bottom:1px solid var(--border); }
+  .version-item:last-child{ border-bottom:none; }
+  .version-head{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
+  .version-role{ font-family:var(--font-display); font-weight:700; font-size:15.5px; }
+  .version-tag{
+    font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px;
+    text-transform:uppercase; letter-spacing:.05em;
+  }
+  .version-tag.now{ background:rgba(52,199,89,.12); color:var(--success); }
+  .version-tag.first{ background:rgba(10,132,255,.1); color:var(--accent); }
+  .version-meta{ font-size:12.5px; color:var(--text-tertiary); margin-bottom:10px; }
+  .version-meta span + span::before{ content:'·'; margin:0 6px; }
+
+  /* ---- Reviews ---- */
+  .reviews-banner{
+    display:flex; align-items:center; gap:14px; background:var(--surface-alt);
+    border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:18px;
+  }
+  .reviews-banner .icon{ width:26px; height:26px; color:var(--star); fill:var(--star); flex-shrink:0; }
+  .reviews-banner-text{ font-size:14px; }
+  .reviews-banner-text strong{ display:block; font-family:var(--font-display); font-size:15px; margin-bottom:2px; }
+  .reviews-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .review-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; }
+  .review-stars{ display:flex; gap:2px; margin-bottom:8px; }
+  .review-stars .icon{ width:13px; height:13px; color:var(--star); fill:var(--star); }
+  @keyframes starPop{
+    from{ transform:scale(0) rotate(-25deg); opacity:0; }
+    to{ transform:scale(1) rotate(0); opacity:1; }
+  }
+  .reveal:not(.visible) .review-stars .icon{ opacity:0; transform:scale(0); }
+  .reveal.visible .review-stars .icon{ animation:starPop .35s cubic-bezier(.34,1.56,.64,1) both; }
+  .review-stars .icon:nth-child(1){ animation-delay:.05s; }
+  .review-stars .icon:nth-child(2){ animation-delay:.12s; }
+  .review-stars .icon:nth-child(3){ animation-delay:.19s; }
+  .review-stars .icon:nth-child(4){ animation-delay:.26s; }
+  .review-stars .icon:nth-child(5){ animation-delay:.33s; }
+  .review-title{ font-family:var(--font-display); font-weight:700; font-size:14.5px; margin-bottom:2px; }
+  .review-meta{ font-size:12px; color:var(--text-tertiary); margin-bottom:8px; }
+  .review-body{ font-size:13px; color:var(--text-secondary); }
+
+  /* ---- More by developer ---- */
+  .app-row{
+    display:flex; align-items:center; gap:14px; padding:14px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .app-row:last-child{ border-bottom:none; }
+  .app-row-icon{
+    width:56px; height:56px; border-radius:13px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:800; font-size:20px; color:#fff;
+  }
+  .app-row-info{ flex:1; min-width:0; }
+  .app-row-name{ font-family:var(--font-display); font-weight:700; font-size:15px; }
+  .app-row-sub{ font-size:12.5px; color:var(--text-secondary); margin-top:1px; }
+  .app-row-dates{ font-size:11.5px; color:var(--text-tertiary); margin-top:2px; }
+  .app-row-get{
+    flex-shrink:0; font-family:var(--font-display); font-weight:800; font-size:13px;
+    color:var(--accent); border:1.5px solid var(--border); background:var(--surface-alt);
+    padding:8px 18px; border-radius:16px; transition:.15s;
+  }
+  .app-row-get:hover{ border-color:var(--accent); background:rgba(10,132,255,.06); }
+
+  /* ---- About / footer ---- */
+  .about-text{ font-size:14.5px; margin-bottom:18px; }
+  .edu-row{ display:flex; gap:12px; align-items:flex-start; margin-bottom:20px; }
+  .edu-icon{
+    width:40px; height:40px; border-radius:10px; flex-shrink:0; background:var(--surface-alt);
+    border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--accent);
+  }
+  .edu-degree{ font-weight:600; font-size:14.5px; }
+  .edu-school{ font-size:13px; color:var(--text-secondary); }
+  .edu-dates{ font-size:12px; color:var(--text-tertiary); margin-top:2px; }
+
+  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
+  .contact-link{
+    display:flex; align-items:center; gap:10px; padding:12px 14px;
+    background:var(--surface-alt); border:1px solid var(--border); border-radius:12px;
+    font-size:13.5px; font-weight:500; transition:.15s;
+  }
+  .contact-link:hover{ border-color:var(--accent); color:var(--accent); }
+  .contact-link .icon{ color:var(--accent); width:16px; height:16px; flex-shrink:0; }
+  .contact-link span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .contact-note{ font-size:12px; color:var(--text-tertiary); margin-bottom:24px; }
+
+  .footer-bottom{
+    text-align:center; font-size:12px; color:var(--text-tertiary);
+    padding:24px 0 calc(48px + env(safe-area-inset-bottom, 0px)); border-top:1px solid var(--border); margin-top:8px;
+  }
+
+  /* ---- Toast ---- */
+  .toast{
+    position:fixed; bottom:calc(24px + env(safe-area-inset-bottom, 0px)); left:50%; transform:translate(-50%,16px);
+    background:var(--text); color:#fff; font-size:13px; font-weight:600;
+    padding:10px 18px; border-radius:999px; opacity:0; transition:opacity .25s,transform .25s;
+    pointer-events:none; z-index:80;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+  /* ---- App launch zoom transition ---- */
+  .launch-overlay{
+    position:fixed; inset:0; background:var(--bg); opacity:0; z-index:9998;
+    transition:opacity .35s ease; pointer-events:none;
+  }
+  .launch-overlay.show{ opacity:1; }
+  .launch-overlay.fade{ opacity:0; }
+  .launch-clone{
+    position:fixed; z-index:9999; background:linear-gradient(135deg,#5e5ce6,#0a84ff);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:800; color:#fff; opacity:1;
+    transition:top .5s cubic-bezier(.2,.9,.3,1.25), left .5s cubic-bezier(.2,.9,.3,1.25),
+      width .5s cubic-bezier(.2,.9,.3,1.25), height .5s cubic-bezier(.2,.9,.3,1.25),
+      border-radius .5s ease, font-size .5s ease, opacity .25s ease;
+  }
+  .launch-clone.fade{ opacity:0; }
+
+  .topbar.scrolled .mini-icon{ animation:badgePop .3s cubic-bezier(.34,1.56,.64,1) both; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:640px){
+    .reviews-grid{ grid-template-columns:1fr; }
+    .contact-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---- Small iPhones (SE/mini up to Pro Max) ---- */
+  @media (max-width:480px){
+    :root{ --gutter:16px; }
+    .hero{ padding:28px 0 22px; }
+    .hero-top{ gap:14px; }
+    .panel{ padding:26px 0; }
+    .panel-head{ margin-bottom:14px; }
+    .info-row{ flex-direction:column; align-items:flex-start; gap:4px; padding:10px 0; }
+    .info-val{ text-align:left; }
+    .app-row{ gap:10px; }
+    .app-row-icon{ width:46px; height:46px; border-radius:11px; font-size:17px; }
+    .app-row-get{ padding:7px 14px; font-size:12px; }
+    .highlight-card{ width:138px; }
+    .mini-name{ font-size:13px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ICON SPRITE -->
+<svg style="display:none">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  </defs>
+</svg>
+
+<!-- TOP BAR -->
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-default">
+      <div class="topbar-leftgroup"><svg class="icon"><use href="#i-back"/></svg> App Store</div>
+      <div class="topbar-search"><svg class="icon" style="width:15px;height:15px"><use href="#i-search"/></svg></div>
+    </div>
+    <div class="topbar-collapsed">
+      <div class="mini-icon">MK</div>
+      <span class="mini-name">Mohit Kumar</span>
+      <button class="get-btn" data-getbtn aria-label="Get">
+        <span class="get-label">GET</span>
+        <svg class="get-ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="ring-track" cx="18" cy="18" r="15.5"/><circle class="ring-fill" cx="18" cy="18" r="15.5"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- PILL NAV -->
+<nav class="pillbar" id="pillbar">
+  <div class="pill-indicator" id="pillIndicator"></div>
+  <button class="pill" data-target="highlights">Highlights</button>
+  <button class="pill" data-target="whatsnew">What's New</button>
+  <button class="pill" data-target="details">Details</button>
+  <button class="pill" data-target="history">Version History</button>
+  <button class="pill" data-target="reviews">Reviews</button>
+  <button class="pill" data-target="apps">More Apps</button>
+  <button class="pill" data-target="about">About</button>
+</nav>
+
+<main>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="hero-top">
+        <div class="app-icon">MK</div>
+        <div class="hero-info">
+          <h1 class="app-name">Mohit Kumar</h1>
+          <p class="app-subtitle">Senior iOS Engineer</p>
+          <div class="badge-row">
+            <span class="badge star"><svg class="icon"><use href="#i-star"/></svg>8 Years Experience</span>
+            <span class="badge cat">iOS Engineering</span>
+            <span class="badge"><svg class="icon"><use href="#i-pin"/></svg>Bangalore, India</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-chip">Delivers Results</span>
+            <span class="trait-chip">Team Player</span>
+            <span class="trait-chip">Bias for Action</span>
+          </div>
+          <div class="action-row">
+            <button class="get-btn" data-getbtn aria-label="Get">
+              <span class="get-label">GET</span>
+              <svg class="get-ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="ring-track" cx="18" cy="18" r="15.5"/><circle class="ring-fill" cx="18" cy="18" r="15.5"/></svg>
+            </button>
+            <button class="icon-btn" id="shareBtn" aria-label="Share"><svg class="icon" style="width:16px;height:16px"><use href="#i-share"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HIGHLIGHTS -->
+    <section class="panel reveal" id="highlights">
+      <div class="panel-head">
+        <h2 class="panel-title">Highlights</h2>
+        <span class="panel-sub">Career milestones</span>
+      </div>
+      <div class="highlights-row">
+        <div class="highlight-card">
+          <div class="highlight-top g1"><svg class="icon"><use href="#i-refresh"/></svg></div>
+          <div class="highlight-body">
+            <div class="highlight-title">SwiftUI Migration</div>
+            <div class="highlight-desc">Led the move from UIKit to SwiftUI for Lowe's server-driven Home screen, unblocking app-wide adoption.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-top g2"><svg class="icon"><use href="#i-message"/></svg></div>
+          <div class="highlight-body">
+            <div class="highlight-title">Custom Chat UI</div>
+            <div class="highlight-desc">Built a personalized chatbot &amp; sleep journal for ResMed with SwiftUI, Combine and AWS.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-top g3"><svg class="icon"><use href="#i-target"/></svg></div>
+          <div class="highlight-body">
+            <div class="highlight-title">Recommendation Engine</div>
+            <div class="highlight-desc">Led Styles for You and Store Deals — Lowe's personalized discovery features.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-top g4"><svg class="icon"><use href="#i-shield"/></svg></div>
+          <div class="highlight-body">
+            <div class="highlight-title">80% Test Coverage</div>
+            <div class="highlight-desc">Raised unit test coverage from 50% to 80% across Allstate Mobile's core modules.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-top g5"><svg class="icon"><use href="#i-zap"/></svg></div>
+          <div class="highlight-body">
+            <div class="highlight-title">Pre-BFCM Crash Fix</div>
+            <div class="highlight-desc">Diagnosed and resolved a critical crash days before the Black Friday code freeze.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-top g6"><svg class="icon"><use href="#i-trend"/></svg></div>
+          <div class="highlight-body">
+            <div class="highlight-title">8 Years, 5 Teams</div>
+            <div class="highlight-desc">From Trendsetters IT to ResMed — shipping iOS apps end-to-end since 2018.</div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-dots" id="highlightDots"></div>
+    </section>
+
+    <!-- WHAT'S NEW -->
+    <section class="panel reveal" id="whatsnew">
+      <div class="panel-head">
+        <h2 class="panel-title">What's New</h2>
+        <span class="version-badge">Version 5.0</span>
+      </div>
+      <div class="whats-new-date">Updated · May 2025 · iOS Engineer at ResMed</div>
+      <ul class="bullet-list">
+        <li>Built a scalable iOS app for a personalized chatbot and sleep journal using SwiftUI, Combine, and AWS services, complete with a custom chat UI.</li>
+        <li>Delivered a seamless user experience while streamlining releases through automated CI/CD, Remote Config, TestFlight management, and thorough testing.</li>
+      </ul>
+    </section>
+
+    <!-- DETAILS -->
+    <section class="panel reveal" id="details">
+      <div class="panel-head">
+        <h2 class="panel-title">Description</h2>
+      </div>
+      <div class="desc-text">
+        <p>Seasoned iOS Engineer with 8+ years of experience delivering scalable, high-impact apps using Swift, SwiftUI, and modern architectures. Proven leader in driving SwiftUI migrations, system design, and cross-team initiatives.</p>
+        <div class="desc-extra" id="descExtra">
+          <p>Comfortable across the full lifecycle — from architecture and dependency injection (MVVM, VIPER, Swinject) to CI/CD pipelines, A/B testing, and App Store releases. Awarded for engineering excellence and ownership in fast-paced, product-driven environments.</p>
+          <p>Based in Bangalore, India, and open to new opportunities.</p>
+        </div>
+      </div>
+      <button class="more-toggle" id="moreToggle">more <svg class="icon"><use href="#i-chevron-down"/></svg></button>
+
+      <div class="info-table">
+        <div class="info-row"><span class="info-key">Provider</span><span class="info-val">Mohit Kumar</span></div>
+        <div class="info-row"><span class="info-key">Category</span><span class="info-val">iOS Engineering</span></div>
+        <div class="info-row"><span class="info-key">Compatibility</span><span class="info-val">Swift, SwiftUI, UIKit, Combine</span></div>
+        <div class="info-row"><span class="info-key">Languages</span><span class="info-val">Swift, Java</span></div>
+        <div class="info-row"><span class="info-key">Size</span><span class="info-val">8 Years Experience</span></div>
+        <div class="info-row"><span class="info-key">Location</span><span class="info-val">Bangalore, India</span></div>
+      </div>
+
+      <div class="chip-section">
+        <div class="chip-section-title">Frameworks &amp; SDKs</div>
+        <div class="chip-row">
+          <span class="chip">SwiftUI</span><span class="chip">Combine</span><span class="chip">Core Data</span>
+          <span class="chip">UIKit</span><span class="chip">Unit Testing</span><span class="chip">UI Testing</span>
+          <span class="chip">Push Notifications</span><span class="chip">Firebase</span>
+        </div>
+        <div class="chip-section-title">Architecture &amp; Tooling</div>
+        <div class="chip-row">
+          <span class="chip">MVVM</span><span class="chip">VIPER</span><span class="chip">DI — Swinject</span>
+          <span class="chip">Localisation</span><span class="chip">Spring Boot</span><span class="chip">A/B Testing</span>
+          <span class="chip">GitHub Actions CI/CD</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- VERSION HISTORY -->
+    <section class="panel reveal" id="history">
+      <div class="panel-head">
+        <h2 class="panel-title">Version History</h2>
+        <span class="panel-sub">5 releases since 2018</span>
+      </div>
+
+      <div class="version-item">
+        <div class="version-head">
+          <span class="version-badge">v5.0</span>
+          <span class="version-role">iOS Engineer · ResMed</span>
+          <span class="version-tag now">Now Available</span>
+        </div>
+        <div class="version-meta"><span>May 2025 – Present</span><span>Bangalore</span></div>
+        <ul class="bullet-list">
+          <li>Personalized chatbot &amp; sleep journal app built with SwiftUI, Combine, and AWS, with a custom chat UI and streamlined CI/CD releases.</li>
+        </ul>
+      </div>
+
+      <div class="version-item">
+        <div class="version-head">
+          <span class="version-badge">v4.0</span>
+          <span class="version-role">SDE 2 — iOS Engineer · Lowe's India</span>
+        </div>
+        <div class="version-meta"><span>Jan 2023 – May 2025</span><span>Bangalore</span></div>
+        <ul class="bullet-list">
+          <li>Led migration of server-driven Home screen components from UIKit to SwiftUI, unblocking app-wide SwiftUI adoption.</li>
+          <li>Standardized server-driven components to align with app-wide design guidelines for a consistent experience.</li>
+          <li>Diagnosed and resolved a critical crash just days before BFCM, ensuring delivery before code freeze.</li>
+        </ul>
+      </div>
+
+      <div class="version-item">
+        <div class="version-head">
+          <span class="version-badge">v3.0</span>
+          <span class="version-role">Software Engineer - iOS · Infosys Limited</span>
+        </div>
+        <div class="version-meta"><span>Jun 2021 – Jan 2023</span><span>Remote</span></div>
+        <ul class="bullet-list">
+          <li>Improved unit test coverage from 50% to 80% in critical modules for Allstate Mobile.</li>
+          <li>Initiated SwiftUI migration for legacy UIKit components, improving maintainability and consistency.</li>
+          <li>Built a proof-of-concept for memory management to detect and reduce leaks.</li>
+        </ul>
+      </div>
+
+      <div class="version-item">
+        <div class="version-head">
+          <span class="version-badge">v2.0</span>
+          <span class="version-role">Software Engineer - iOS · Tech X Infosolutions</span>
+        </div>
+        <div class="version-meta"><span>Feb 2020 – May 2021</span><span>Remote</span></div>
+        <ul class="bullet-list">
+          <li>Delivered end-to-end iOS apps using Swift and UIKit, integrating Firebase and Google Maps for clients under tight deadlines.</li>
+        </ul>
+      </div>
+
+      <div class="version-item">
+        <div class="version-head">
+          <span class="version-badge">v1.0</span>
+          <span class="version-role">Assistant Software Engineer - iOS · Trendsetters IT</span>
+          <span class="version-tag first">Initial Release</span>
+        </div>
+        <div class="version-meta"><span>Jan 2018 – Feb 2020</span><span>Lucknow</span></div>
+        <ul class="bullet-list">
+          <li>Built iOS apps from scratch using UIKit, handled App Store / TestFlight releases, and integrated social login.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="panel reveal" id="reviews">
+      <div class="panel-head">
+        <h2 class="panel-title">Ratings &amp; Reviews</h2>
+      </div>
+      <div class="reviews-banner">
+        <svg class="icon"><use href="#i-star"/></svg>
+        <div class="reviews-banner-text">
+          <strong>Recognized for engineering excellence</strong>
+          2 recognitions from Lowe's India
+        </div>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">
+            <svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg>
+          </div>
+          <div class="review-title">Individual Excellence</div>
+          <div class="review-meta">Lowe's India · Feb 2025</div>
+          <div class="review-body">Awarded for top performance and impact across iOS teams — delivering key features, resolving critical issues, and leading SwiftUI &amp; ComponentHub migrations with strong ownership and cross-team collaboration.</div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">
+            <svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg>
+          </div>
+          <div class="review-title">Spot Award</div>
+          <div class="review-meta">Lowe's India · 9 May 2024</div>
+          <div class="review-body">Issued by the SVP of Technology &amp; Managing Director, Lowe's India.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MORE BY DEVELOPER -->
+    <section class="panel reveal" id="apps">
+      <div class="panel-head">
+        <h2 class="panel-title">More Apps by this Developer</h2>
+      </div>
+
+      <div class="app-row">
+        <div class="app-row-icon g1">L</div>
+        <div class="app-row-info">
+          <div class="app-row-name">Lowe's Home Improvement</div>
+          <div class="app-row-sub">Recommendation features &amp; SwiftUI migration</div>
+          <div class="app-row-dates">Jan 2023 – May 2025</div>
+        </div>
+        <a class="app-row-get" href="https://apps.apple.com/us/app/lowes-home-improvement/id457954781" target="_blank" rel="noopener">GET</a>
+      </div>
+
+      <div class="app-row">
+        <div class="app-row-icon g2">A</div>
+        <div class="app-row-info">
+          <div class="app-row-name">Allstate Mobile</div>
+          <div class="app-row-sub">XCTest coverage &amp; SwiftUI migration</div>
+          <div class="app-row-dates">Jun 2021 – Jan 2023</div>
+        </div>
+        <a class="app-row-get" href="https://apps.apple.com/us/app/allstate-mobile/id364376344" target="_blank" rel="noopener">GET</a>
+      </div>
+
+      <div class="app-row">
+        <div class="app-row-icon g4">O</div>
+        <div class="app-row-info">
+          <div class="app-row-name">Outlet By Dexter</div>
+          <div class="app-row-sub">End-to-end ownership, Firebase &amp; payments</div>
+          <div class="app-row-dates">Jan 2018 – Feb 2021</div>
+        </div>
+        <a class="app-row-get" href="https://apps.apple.com/us/app/outlet-by-dexter/id1517556179" target="_blank" rel="noopener">GET</a>
+      </div>
+    </section>
+
+    <!-- ABOUT / CONTACT -->
+    <section class="panel reveal" id="about">
+      <div class="panel-head">
+        <h2 class="panel-title">About the Developer</h2>
+      </div>
+      <p class="about-text">Mohit Kumar is a Senior iOS Engineer based in Bangalore, India, with 8+ years of experience shipping Swift &amp; SwiftUI apps for global brands — currently open to new opportunities.</p>
+
+      <div class="edu-row">
+        <div class="edu-icon"><svg class="icon"><use href="#i-book"/></svg></div>
+        <div>
+          <div class="edu-degree">Bachelor of Technology, Computer Science</div>
+          <div class="edu-school">BBD NIIT, Lucknow</div>
+          <div class="edu-dates">Aug 2012 – Aug 2016</div>
+        </div>
+      </div>
+
+      <div class="contact-grid">
+        <a class="contact-link" href="mailto:developer.mohitkmr@gmail.com"><svg class="icon"><use href="#i-mail"/></svg><span>developer.mohitkmr@gmail.com</span></a>
+        <a class="contact-link" href="tel:8188049263"><svg class="icon"><use href="#i-phone"/></svg><span>818 804 9263</span></a>
+        <a class="contact-link" href="https://www.linkedin.com/in/ios-mohit-kumar/" target="_blank" rel="noopener"><svg class="icon"><use href="#i-linkedin"/></svg><span>LinkedIn</span></a>
+        <a class="contact-link" href="https://leetcode.com/u/u_erozone/" target="_blank" rel="noopener"><svg class="icon"><use href="#i-code"/></svg><span>LeetCode</span></a>
+      </div>
+
+      <div class="footer-bottom">© 2026 Mohit Kumar · Made for the App Store of careers</div>
+    </section>
+
+  </div>
+</main>
+
+<div class="toast" id="toast">Link copied to clipboard</div>
+
+<script>
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Top bar collapse on scroll ----
+  const topbar = document.getElementById('topbar');
+  const hero = document.getElementById('hero');
+  function onScrollTopbar(){
+    const threshold = hero.offsetTop + hero.offsetHeight * 0.6;
+    topbar.classList.toggle('scrolled', window.scrollY > threshold);
+  }
+  window.addEventListener('scroll', onScrollTopbar, { passive:true });
+  onScrollTopbar();
+
+  // ---- GET / OPEN buttons (synced) ----
+  const getBtns = document.querySelectorAll('[data-getbtn]');
+  function handleGet(){
+    if (getBtns[0].classList.contains('installed')){
+      launchApp();
+      return;
+    }
+    getBtns.forEach(btn => {
+      btn.classList.add('installing');
+      btn.setAttribute('aria-label', 'Installing');
+    });
+    setTimeout(() => {
+      getBtns.forEach(btn => {
+        btn.classList.remove('installing');
+        btn.classList.add('installed');
+        btn.querySelector('.get-label').textContent = 'OPEN';
+        btn.setAttribute('aria-label', 'Open');
+      });
+    }, reducedMotion ? 0 : 1000);
+  }
+  getBtns.forEach(btn => btn.addEventListener('click', handleGet));
+
+  // ---- App launch zoom: icon expands to fill the screen, then reveals About ----
+  function launchApp(){
+    const target = document.getElementById('about');
+    if (reducedMotion){
+      target.scrollIntoView({ behavior:'auto', block:'start' });
+      return;
+    }
+    const source = topbar.classList.contains('scrolled')
+      ? document.querySelector('.mini-icon')
+      : document.querySelector('.app-icon');
+    const rect = source.getBoundingClientRect();
+    const computed = window.getComputedStyle(source);
+
+    const clone = document.createElement('div');
+    clone.className = 'launch-clone';
+    clone.textContent = 'MK';
+    clone.style.top = rect.top + 'px';
+    clone.style.left = rect.left + 'px';
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    clone.style.borderRadius = computed.borderRadius;
+    clone.style.fontSize = computed.fontSize;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'launch-overlay';
+
+    document.body.append(overlay, clone);
+
+    requestAnimationFrame(() => {
+      overlay.classList.add('show');
+      clone.style.top = '0px';
+      clone.style.left = '0px';
+      clone.style.width = '100vw';
+      clone.style.height = '100vh';
+      clone.style.borderRadius = '0px';
+      clone.style.fontSize = '15vw';
+    });
+
+    setTimeout(() => {
+      target.scrollIntoView({ behavior:'auto', block:'start' });
+      overlay.classList.add('fade');
+      clone.classList.add('fade');
+      setTimeout(() => { overlay.remove(); clone.remove(); }, 400);
+    }, 550);
+  }
+
+  // ---- Share button ----
+  const shareBtn = document.getElementById('shareBtn');
+  const toast = document.getElementById('toast');
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+  shareBtn.addEventListener('click', async () => {
+    const shareData = { title: 'Mohit Kumar — Senior iOS Engineer', url: window.location.href };
+    try{
+      if (navigator.share){ await navigator.share(shareData); }
+      else { await navigator.clipboard.writeText(window.location.href); showToast('Link copied to clipboard'); }
+    } catch(e){ /* user cancelled share — no action needed */ }
+  });
+
+  // ---- Description "more" toggle ----
+  const moreToggle = document.getElementById('moreToggle');
+  const descExtra = document.getElementById('descExtra');
+  moreToggle.addEventListener('click', () => {
+    const open = descExtra.classList.toggle('open');
+    moreToggle.classList.toggle('open', open);
+    moreToggle.childNodes[0].textContent = open ? 'less ' : 'more ';
+  });
+
+  // ---- Pill nav scrollspy + click + sliding indicator ----
+  const pills = document.querySelectorAll('.pill');
+  const pillIndicator = document.getElementById('pillIndicator');
+
+  function moveIndicator(pill){
+    if (!pill) return;
+    pillIndicator.style.left = pill.offsetLeft + 'px';
+    pillIndicator.style.width = pill.offsetWidth + 'px';
+    pillIndicator.classList.add('ready');
+  }
+  function setActivePill(targetId){
+    pills.forEach(p => {
+      const isActive = p.dataset.target === targetId;
+      p.classList.toggle('active', isActive);
+      if (isActive) moveIndicator(p);
+    });
+  }
+
+  pills.forEach(p => p.addEventListener('click', () => {
+    document.getElementById(p.dataset.target).scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block:'start' });
+  }));
+  const pillSections = [...pills].map(p => document.getElementById(p.dataset.target));
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActivePill(entry.target.id);
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold:0 });
+  pillSections.forEach(sec => sec && spy.observe(sec));
+
+  window.addEventListener('resize', () => {
+    const active = document.querySelector('.pill.active');
+    if (active) moveIndicator(active);
+  });
+
+  // ---- Highlights carousel pagination dots ----
+  const highlightsRow = document.querySelector('.highlights-row');
+  const highlightDots = document.getElementById('highlightDots');
+  const cards = [...document.querySelectorAll('.highlight-card')];
+  cards.forEach((card, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot';
+    dot.setAttribute('aria-label', 'Go to highlight ' + (i + 1));
+    dot.addEventListener('click', () => {
+      highlightsRow.scrollTo({ left: card.offsetLeft - 20, behavior: reducedMotion ? 'auto' : 'smooth' });
+    });
+    highlightDots.appendChild(dot);
+  });
+  const dots = [...highlightDots.children];
+  function updateDots(){
+    const center = highlightsRow.scrollLeft + highlightsRow.clientWidth / 2;
+    let closest = 0, min = Infinity;
+    cards.forEach((card, i) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const dist = Math.abs(cardCenter - center);
+      if (dist < min){ min = dist; closest = i; }
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === closest));
+  }
+  highlightsRow.addEventListener('scroll', updateDots, { passive:true });
+  updateDots();
+
+  // ---- Reveal on scroll ----
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.12 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+
+</body>
+</html>
